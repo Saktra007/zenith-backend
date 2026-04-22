@@ -41,7 +41,15 @@ router.get(
     const token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET, {
       expiresIn: "30d",
     });
-    res.redirect(`${process.env.FRONTEND_URL}/login-success?token=${token}`);
+
+    const redirectUrl = new URL(`${process.env.FRONTEND_URL}/login-success`);
+    redirectUrl.searchParams.append("token", token);
+    redirectUrl.searchParams.append("first_name", req.user.first_name);
+    redirectUrl.searchParams.append("last_name", req.user.last_name || "");
+    redirectUrl.searchParams.append("avatar", req.user.avatar || "");
+    redirectUrl.searchParams.append("email", req.user.email || "");
+    redirectUrl.searchParams.append("role", req.user.role || "admin");
+    res.redirect(redirectUrl.toString());
   },
 );
 
